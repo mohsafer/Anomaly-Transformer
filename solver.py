@@ -372,4 +372,8 @@ class Solver(object):
                 recall, f_score))
 
         return accuracy, precision, recall, f_score
-      
+        plt.plot(np.arange(epoch-1), train_losses[1:], label='train loss')
+        plt.plot(np.arange(epoch-1), val_losses[1:], label='validation loss')
+        plt.xlabel('epochs')
+        plt.legend()
+        plt.show()
