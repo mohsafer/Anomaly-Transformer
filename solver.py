@@ -418,8 +418,6 @@ class Solver(object):
         precision, recall, f_score, _ = precision_recall_fscore_support(all_gts, all_preds, average='binary')
         return accuracy, precision, recall, f_score
 """
-
-    def plot_metrics(self):
         # Plot accuracy, precision, recall, and F-score
         epochs = range(1, len(self.accuracy_list) + 1)
         plt.figure(figsize=(12, 8))
