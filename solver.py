@@ -208,15 +208,15 @@ class Solver(object):
             #accuracy, precision, recall, f_score = self.evaluate_metrics()
 
             # Store metrics
-            self.accuracy_list.append(accuracy)
-            self.precision_list.append(precision)
-            self.recall_list.append(recall)
-            self.fscore_list.append(f_score)
+            #self.accuracy_list.append(accuracy)
+            #self.precision_list.append(precision)
+           # self.recall_list.append(recall)
+            #self.fscore_list.append(f_score)
 
-            print(f"Epoch {epoch + 1}:")
-            print(f"  Train Loss: {train_loss:.7f}")
-            print(f"  Validation Loss: {vali_loss1:.7f}")
-            print(f"  Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F-score: {f_score:.4f}")
+            #print(f"Epoch {epoch + 1}:")
+           # print(f"  Train Loss: {train_loss:.7f}")
+           # print(f"  Validation Loss: {vali_loss1:.7f}")
+            #print(f"  Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F-score: {f_score:.4f}")
 
 
         #   print(
