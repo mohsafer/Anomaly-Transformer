@@ -8,6 +8,8 @@ from utils.utils import *
 from model.AnomalyTransformer import AnomalyTransformer
 from data_factory.data_loader import get_loader_segment
 import matplotlib.pyplot as plt
+from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import accuracy_score
 
 def my_kl_loss(p, q):
     res = p * (torch.log(p + 0.0001) - torch.log(q + 0.0001))
@@ -66,6 +68,13 @@ class Solver(object):
     DEFAULTS = {}
 
     def __init__(self, config):
+#######################################ADD
+        self.accuracy_list = []
+        self.precision_list = []
+        self.recall_list = []
+        self.fscore_list = []
+#######################################ADD
+
 
         self.__dict__.update(Solver.DEFAULTS, **config)
 
@@ -192,16 +201,89 @@ class Solver(object):
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
             train_loss = np.average(loss1_list)
 
+            # Validation step
             vali_loss1, vali_loss2 = self.vali(self.test_loader)
 
-            print(
-                "Epoch: {0}, Steps: {1} | Train Loss: {2:.7f} Vali Loss: {3:.7f} ".format(
-                    epoch + 1, train_steps, train_loss, vali_loss1))
+            # Compute metrics on validation set
+            accuracy, precision, recall, f_score = self.evaluate_metrics()
+
+            # Store metrics
+            self.accuracy_list.append(accuracy)
+            self.precision_list.append(precision)
+            self.recall_list.append(recall)
+            self.fscore_list.append(f_score)
+
+            print(f"Epoch {epoch + 1}:")
+            print(f"  Train Loss: {train_loss:.7f}")
+            print(f"  Validation Loss: {vali_loss1:.7f}")
+            print(f"  Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F-score: {f_score:.4f}")
+
+
+        #   print(
+         #       "Epoch: {0}, Steps: {1} | Train Loss: {2:.7f} Vali Loss: {3:.7f} ".format(
+              #      epoch + 1, train_steps, train_loss, vali_loss1))
+
+
             early_stopping(vali_loss1, vali_loss2, self.model, path)
             if early_stopping.early_stop:
                 print("Early stopping")
                 break
             adjust_learning_rate(self.optimizer, epoch + 1, self.lr)
+
+
+
+    def evaluate_metrics(self):
+        # Evaluate the model on validation data
+        self.model.eval()
+        all_preds = []
+        all_gts = []
+        for input_data, labels in self.vali_loader:
+            input = input_data.float().to(self.device)
+            output, _, _, _ = self.model(input)
+            preds = (output > 0.5).cpu().numpy()  # Assuming binary classification (adjust threshold as needed)
+            all_preds.extend(preds)
+            all_gts.extend(labels.numpy())
+
+        accuracy = accuracy_score(all_gts, all_preds)
+        precision, recall, f_score, _ = precision_recall_fscore_support(all_gts, all_preds, average='binary')
+        return accuracy, precision, recall, f_score
+
+    def plot_metrics(self):
+        # Plot accuracy, precision, recall, and F-score
+        epochs = range(1, len(self.accuracy_list) + 1)
+
+        plt.figure(figsize=(12, 8))
+
+        plt.subplot(2, 2, 1)
+        plt.plot(epochs, self.accuracy_list, 'b', label='Accuracy')
+        plt.title('Accuracy over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
+        plt.legend()
+
+        plt.subplot(2, 2, 2)
+        plt.plot(epochs, self.precision_list, 'g', label='Precision')
+        plt.title('Precision over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Precision')
+        plt.legend()
+
+        plt.subplot(2, 2, 3)
+        plt.plot(epochs, self.recall_list, 'r', label='Recall')
+        plt.title('Recall over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Recall')
+        plt.legend()
+
+        plt.subplot(2, 2, 4)
+        plt.plot(epochs, self.fscore_list, 'm', label='F-Score')
+        plt.title('F-Score over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('F-Score')
+        plt.legend()
+
+        plt.tight_layout()
+
 
     def test(self):
         self.model.load_state_dict(
@@ -362,8 +444,6 @@ class Solver(object):
         print("gt:   ", gt.shape)
 
 
-        from sklearn.metrics import precision_recall_fscore_support
-        from sklearn.metrics import accuracy_score
         accuracy = accuracy_score(gt, pred)
         precision, recall, f_score, support = precision_recall_fscore_support(gt, pred,
                                                                               average='binary')
