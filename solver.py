@@ -232,58 +232,6 @@ class Solver(object):
 
 
 
-    def evaluate_metrics(self):
-        # Evaluate the model on validation data
-        self.model.eval()
-        all_preds = []
-        all_gts = []
-        for input_data, labels in self.vali_loader:
-            input = input_data.float().to(self.device)
-            output, _, _, _ = self.model(input)
-            preds = (output > 0.5).cpu().numpy()  # Assuming binary classification (adjust threshold as needed)
-            all_preds.extend(preds)
-            all_gts.extend(labels.numpy())
-
-        accuracy = accuracy_score(all_gts, all_preds)
-        precision, recall, f_score, _ = precision_recall_fscore_support(all_gts, all_preds, average='binary')
-        return accuracy, precision, recall, f_score
-
-    def plot_metrics(self):
-        # Plot accuracy, precision, recall, and F-score
-        epochs = range(1, len(self.accuracy_list) + 1)
-
-        plt.figure(figsize=(12, 8))
-
-        plt.subplot(2, 2, 1)
-        plt.plot(epochs, self.accuracy_list, 'b', label='Accuracy')
-        plt.title('Accuracy over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Accuracy')
-        plt.legend()
-
-        plt.subplot(2, 2, 2)
-        plt.plot(epochs, self.precision_list, 'g', label='Precision')
-        plt.title('Precision over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Precision')
-        plt.legend()
-
-        plt.subplot(2, 2, 3)
-        plt.plot(epochs, self.recall_list, 'r', label='Recall')
-        plt.title('Recall over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Recall')
-        plt.legend()
-
-        plt.subplot(2, 2, 4)
-        plt.plot(epochs, self.fscore_list, 'm', label='F-Score')
-        plt.title('F-Score over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('F-Score')
-        plt.legend()
-
-        plt.tight_layout()
-
 
     def test(self):
         self.model.load_state_dict(
@@ -452,8 +400,57 @@ class Solver(object):
                 recall, f_score))
 
         return accuracy, precision, recall, f_score
-        plt.plot(np.arange(epoch-1), train_losses[1:], label='train loss')
-        plt.plot(np.arange(epoch-1), val_losses[1:], label='validation loss')
-        plt.xlabel('epochs')
+
+"""
+    def evaluate_metrics(self):
+        # Evaluate the model on validation data
+        self.model.eval()
+        all_preds = []
+        all_gts = []
+        for input_data, labels in self.vali_loader:
+            input = input_data.float().to(self.device)
+            output, _, _, _ = self.model(input)
+            preds = (output > 0.5).cpu().numpy()  # Assuming binary classification (adjust threshold as needed)
+            all_preds.extend(preds)
+            all_gts.extend(labels.numpy())
+
+        accuracy = accuracy_score(all_gts, all_preds)
+        precision, recall, f_score, _ = precision_recall_fscore_support(all_gts, all_preds, average='binary')
+        return accuracy, precision, recall, f_score
+"""
+
+    def plot_metrics(self):
+        # Plot accuracy, precision, recall, and F-score
+        epochs = range(1, len(self.accuracy_list) + 1)
+
+        plt.figure(figsize=(12, 8))
+
+        plt.subplot(2, 2, 1)
+        plt.plot(epochs, self.accuracy_list, 'b', label='Accuracy')
+        plt.title('Accuracy over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
         plt.legend()
-        plt.show()
+
+        plt.subplot(2, 2, 2)
+        plt.plot(epochs, self.precision_list, 'g', label='Precision')
+        plt.title('Precision over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Precision')
+        plt.legend()
+
+        plt.subplot(2, 2, 3)
+        plt.plot(epochs, self.recall_list, 'r', label='Recall')
+        plt.title('Recall over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Recall')
+        plt.legend()
+
+        plt.subplot(2, 2, 4)
+        plt.plot(epochs, self.fscore_list, 'm', label='F-Score')
+        plt.title('F-Score over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('F-Score')
+        plt.legend()
+
+        plt.tight_layout()
