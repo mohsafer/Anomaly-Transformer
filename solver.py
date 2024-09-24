@@ -7,7 +7,7 @@ import time
 from utils.utils import *
 from model.AnomalyTransformer import AnomalyTransformer
 from data_factory.data_loader import get_loader_segment
-
+import matplotlib.pyplot as plt
 
 def my_kl_loss(p, q):
     res = p * (torch.log(p + 0.0001) - torch.log(q + 0.0001))
@@ -373,3 +373,10 @@ class Solver(object):
                 recall, f_score))
 
         return accuracy, precision, recall, f_score
+
+
+plt.plot(np.arange(epoch-1), train_loss[1:], label='train loss')
+plt.plot(np.arange(epoch-1), val_loss[1:], label='validation loss')
+plt.xlabel('epochs')
+plt.legend()
+plt.show()
