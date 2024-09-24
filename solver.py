@@ -95,7 +95,6 @@ class Solver(object):
 
     def vali(self, vali_loader):
         self.model.eval()
-
         loss_1 = []
         loss_2 = []
         for i, (input_data, _) in enumerate(vali_loader):
@@ -375,8 +374,8 @@ class Solver(object):
         return accuracy, precision, recall, f_score
 
 
-plt.plot(np.arange(epoch-1), train_loss[1:], label='train loss')
-plt.plot(np.arange(epoch-1), val_loss[1:], label='validation loss')
+plt.plot(np.arange(epoch), train_loss[1:], label='train loss')
+plt.plot(np.arange(epoch), val_loss[1:], label='validation loss')
 plt.xlabel('epochs')
 plt.legend()
 plt.show()
