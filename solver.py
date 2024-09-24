@@ -422,9 +422,7 @@ class Solver(object):
     def plot_metrics(self):
         # Plot accuracy, precision, recall, and F-score
         epochs = range(1, len(self.accuracy_list) + 1)
-
         plt.figure(figsize=(12, 8))
-
         plt.subplot(2, 2, 1)
         plt.plot(epochs, self.accuracy_list, 'b', label='Accuracy')
         plt.title('Accuracy over Epochs')
@@ -454,3 +452,4 @@ class Solver(object):
         plt.legend()
 
         plt.tight_layout()
+        plt.show()
