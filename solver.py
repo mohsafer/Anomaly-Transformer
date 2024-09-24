@@ -398,6 +398,11 @@ class Solver(object):
         print("Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f} ".format(
                 accuracy, precision,
                 recall, f_score))
+ # Store metrics
+        self.accuracy_list.append(accuracy)
+        self.precision_list.append(precision)
+        self.recall_list.append(recall)
+        self.fscore_list.append(f_score)
 
         return accuracy, precision, recall, f_score
 
