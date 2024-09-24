@@ -361,6 +361,7 @@ class Solver(object):
         print("pred: ", pred.shape)
         print("gt:   ", gt.shape)
 
+
         from sklearn.metrics import precision_recall_fscore_support
         from sklearn.metrics import accuracy_score
         accuracy = accuracy_score(gt, pred)
@@ -372,8 +373,4 @@ class Solver(object):
                 recall, f_score))
 
         return accuracy, precision, recall, f_score
-        plt.plot(np.arange(epoch), train_loss[1:], label='train loss')
-        plt.plot(np.arange(epoch), val_loss[1:], label='validation loss')
-        plt.xlabel('epochs')
-        plt.legend()
-        plt.show()  
+      
