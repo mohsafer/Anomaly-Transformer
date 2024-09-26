@@ -203,12 +203,10 @@ class Solver(object):
 
             # Validation step
             vali_loss1, vali_loss2 = self.vali(self.test_loader)
-
-            # Compute metrics on validation set
-            #accuracy, precision, recall, f_score = self.evaluate_metrics()
-
-            accuracy = accuracy_score(gt, pred)
-            precision, recall, f_score, _ = precision_recall_fscore_support(gt, pred, average='binary')
+ 
+            """
+            #accuracy = accuracy_score(gt, pred)
+            #precision, recall, f_score, _ = precision_recall_fscore_support(gt, pred, average='binary')
 
             # Store metrics
             self.accuracy_list.append(accuracy)
@@ -220,7 +218,7 @@ class Solver(object):
             print(f"  Train Loss: {train_loss:.7f}")
             print(f"  Validation Loss: {vali_loss1:.7f}")
             print(f"  Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F-score: {f_score:.4f}")
-
+            """
 
         #   print(
          #       "Epoch: {0}, Steps: {1} | Train Loss: {2:.7f} Vali Loss: {3:.7f} ".format(
@@ -234,45 +232,6 @@ class Solver(object):
             adjust_learning_rate(self.optimizer, epoch + 1, self.lr)
 
 
-        # Plot the metrics
-        self.plot_metrics()
-        
-    def plot_metrics(self):
-        # Plot accuracy, precision, recall, and F-score
-        epochs = range(1, len(self.accuracy_list) + 1)
-
-        plt.figure(figsize=(12, 8))
-
-        plt.subplot(2, 2, 1)
-        plt.plot(epochs, self.accuracy_list, 'b', label='Accuracy')
-        plt.title('Accuracy over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Accuracy')
-        plt.legend()
-
-        plt.subplot(2, 2, 2)
-        plt.plot(epochs, self.precision_list, 'g', label='Precision')
-        plt.title('Precision over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Precision')
-        plt.legend()
-
-        plt.subplot(2, 2, 3)
-        plt.plot(epochs, self.recall_list, 'r', label='Recall')
-        plt.title('Recall over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Recall')
-        plt.legend()
-
-        plt.subplot(2, 2, 4)
-        plt.plot(epochs, self.fscore_list, 'm', label='F-Score')
-        plt.title('F-Score over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('F-Score')
-        plt.legend()
-
-        plt.tight_layout()
-        plt.show()
 
 
 
@@ -444,6 +403,53 @@ class Solver(object):
         print("Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f} ".format(
                 accuracy, precision,
                 recall, f_score))
+
+
+        self.accuracy_list.append(accuracy)
+        self.precision_list.append(precision)
+        self.recall_list.append(recall)
+        self.fscore_list.append(f_score)
+
+
+        # Plot the metrics
+        self.plot_metrics()
+        
+    def plot_metrics(self):
+        # Plot accuracy, precision, recall, and F-score
+        epochs = range(1, len(self.accuracy_list) + 1)
+
+        plt.figure(figsize=(12, 8))
+
+        plt.subplot(2, 2, 1)
+        plt.plot(epochs, self.accuracy_list, 'b', label='Accuracy')
+        plt.title('Accuracy over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
+        plt.legend()
+
+        plt.subplot(2, 2, 2)
+        plt.plot(epochs, self.precision_list, 'g', label='Precision')
+        plt.title('Precision over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Precision')
+        plt.legend()
+
+        plt.subplot(2, 2, 3)
+        plt.plot(epochs, self.recall_list, 'r', label='Recall')
+        plt.title('Recall over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Recall')
+        plt.legend()
+
+        plt.subplot(2, 2, 4)
+        plt.plot(epochs, self.fscore_list, 'm', label='F-Score')
+        plt.title('F-Score over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('F-Score')
+        plt.legend()
+
+        plt.tight_layout()
+        plt.show()
 
 
         return accuracy, precision, recall, f_score
