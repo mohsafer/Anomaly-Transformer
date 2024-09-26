@@ -428,7 +428,8 @@ class Solver(object):
     def plot_metrics(self):
         # Plot accuracy, precision, recall, and F-score
         #range(self.num_epochs):
-        epochs = range(1, len(self.accuracy_list) + 1)
+       # epochs = range(1, len(self.accuracy_list) + 1)
+        epochs =  range(self.num_epochs)
 
         plt.figure(figsize=(12, 8))
 
