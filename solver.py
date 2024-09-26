@@ -405,11 +405,11 @@ class Solver(object):
         self.precision_list.append(precision)
         self.recall_list.append(recall)
         self.fscore_list.append(f_score)
-        
+        self.plot_metrics()
         return accuracy, precision, recall, f_score
 
         # Plot the metrics
-        self.plot_metrics()
+
         
     def plot_metrics(self):
         # Plot accuracy, precision, recall, and F-score
