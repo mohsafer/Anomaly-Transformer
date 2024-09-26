@@ -271,7 +271,7 @@ class Solver(object):
         plt.tight_layout()
         plt.show()
 
-
+"""
     def evaluate_metrics(self):
         # Evaluate the model on validation data
         self.model.eval()
@@ -283,7 +283,7 @@ class Solver(object):
             pred = (output > 0.5).cpu().numpy()  # Assuming binary classification (adjust threshold as needed)
             pred.extend(pred)
             gt.extend(labels.numpy())
-
+"""
         accuracy = accuracy_score(gt, pred)
         precision, recall, f_score, _ = precision_recall_fscore_support(gt, pred, average='binary')
         return accuracy, precision, recall, f_score
