@@ -275,17 +275,17 @@ class Solver(object):
     def evaluate_metrics(self):
         # Evaluate the model on validation data
         self.model.eval()
-        all_preds = []
-        all_gts = []
+        gt = []
+        pred = []
         for input_data, labels in self.vali_loader:
             input = input_data.float().to(self.device)
             output, _, _, _ = self.model(input)
-            preds = (output > 0.5).cpu().numpy()  # Assuming binary classification (adjust threshold as needed)
-            all_preds.extend(preds)
-            all_gts.extend(labels.numpy())
+            pred = (output > 0.5).cpu().numpy()  # Assuming binary classification (adjust threshold as needed)
+            pred.extend(pred)
+            gt.extend(labels.numpy())
 
-        accuracy = accuracy_score(all_gts, all_preds)
-        precision, recall, f_score, _ = precision_recall_fscore_support(all_gts, all_preds, average='binary')
+        accuracy = accuracy_score(gt, pred)
+        precision, recall, f_score, _ = precision_recall_fscore_support(gt, pred, average='binary')
         return accuracy, precision, recall, f_score
 
     def test(self):
