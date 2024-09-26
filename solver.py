@@ -233,11 +233,6 @@ class Solver(object):
 
 
 
-
-
-        
-        return accuracy, precision, recall, f_score
-
     def test(self):
         self.model.load_state_dict(
             torch.load(
