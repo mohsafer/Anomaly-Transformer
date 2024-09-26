@@ -205,7 +205,7 @@ class Solver(object):
             vali_loss1, vali_loss2 = self.vali(self.test_loader)
 
             # Compute metrics on validation set
-            accuracy, precision, recall, f_score = self.evaluate_metrics()
+            #accuracy, precision, recall, f_score = self.evaluate_metrics()
 
             # Store metrics
             self.accuracy_list.append(accuracy)
