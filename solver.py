@@ -68,13 +68,14 @@ class Solver(object):
     DEFAULTS = {}
 
     def __init__(self, config):
+        """
 #######################################ADD
         self.accuracy_list = []
         self.precision_list = []
         self.recall_list = []
         self.fscore_list = []
 #######################################ADD
-
+        """
 
         self.__dict__.update(Solver.DEFAULTS, **config)
 
@@ -234,6 +235,12 @@ class Solver(object):
 
 
     def test(self):
+        
+        self.accuracy_list = []
+        self.precision_list = []
+        self.recall_list = []
+        self.fscore_list = []
+
         self.model.load_state_dict(
             torch.load(
                 os.path.join(str(self.model_save_path), str(self.dataset) + '_checkpoint.pth')))
@@ -400,12 +407,14 @@ class Solver(object):
                 recall, f_score))
 
         
-
+    #def add_accuracy(self, accuracy):
         self.accuracy_list.append(accuracy)
         self.precision_list.append(precision)
         self.recall_list.append(recall)
-        self.fscore_list.append(f_score)
+        self.self.fscore_list.append(f_score)
+
         self.plot_metrics()
+
         return accuracy, precision, recall, f_score
 
         # Plot the metrics
