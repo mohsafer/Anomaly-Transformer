@@ -205,18 +205,18 @@ class Solver(object):
             vali_loss1, vali_loss2 = self.vali(self.test_loader)
 
             # Compute metrics on validation set
-            #accuracy, precision, recall, f_score = self.evaluate_metrics()
+            accuracy, precision, recall, f_score = self.evaluate_metrics()
 
             # Store metrics
-            #self.accuracy_list.append(accuracy)
-            #self.precision_list.append(precision)
-           # self.recall_list.append(recall)
-            #self.fscore_list.append(f_score)
+            self.accuracy_list.append(accuracy)
+            self.precision_list.append(precision)
+            self.recall_list.append(recall)
+            self.fscore_list.append(f_score)
 
-            #print(f"Epoch {epoch + 1}:")
-           # print(f"  Train Loss: {train_loss:.7f}")
-           # print(f"  Validation Loss: {vali_loss1:.7f}")
-            #print(f"  Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F-score: {f_score:.4f}")
+            print(f"Epoch {epoch + 1}:")
+            print(f"  Train Loss: {train_loss:.7f}")
+            print(f"  Validation Loss: {vali_loss1:.7f}")
+            print(f"  Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F-score: {f_score:.4f}")
 
 
         #   print(
@@ -231,7 +231,62 @@ class Solver(object):
             adjust_learning_rate(self.optimizer, epoch + 1, self.lr)
 
 
+        # Plot the metrics
+        self.plot_metrics()
+        
+    def plot_metrics(self):
+        # Plot accuracy, precision, recall, and F-score
+        epochs = range(1, len(self.accuracy_list) + 1)
 
+        plt.figure(figsize=(12, 8))
+
+        plt.subplot(2, 2, 1)
+        plt.plot(epochs, self.accuracy_list, 'b', label='Accuracy')
+        plt.title('Accuracy over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
+        plt.legend()
+
+        plt.subplot(2, 2, 2)
+        plt.plot(epochs, self.precision_list, 'g', label='Precision')
+        plt.title('Precision over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Precision')
+        plt.legend()
+
+        plt.subplot(2, 2, 3)
+        plt.plot(epochs, self.recall_list, 'r', label='Recall')
+        plt.title('Recall over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('Recall')
+        plt.legend()
+
+        plt.subplot(2, 2, 4)
+        plt.plot(epochs, self.fscore_list, 'm', label='F-Score')
+        plt.title('F-Score over Epochs')
+        plt.xlabel('Epochs')
+        plt.ylabel('F-Score')
+        plt.legend()
+
+        plt.tight_layout()
+        plt.show()
+
+
+    def evaluate_metrics(self):
+        # Evaluate the model on validation data
+        self.model.eval()
+        all_preds = []
+        all_gts = []
+        for input_data, labels in self.vali_loader:
+            input = input_data.float().to(self.device)
+            output, _, _, _ = self.model(input)
+            preds = (output > 0.5).cpu().numpy()  # Assuming binary classification (adjust threshold as needed)
+            all_preds.extend(preds)
+            all_gts.extend(labels.numpy())
+
+        accuracy = accuracy_score(all_gts, all_preds)
+        precision, recall, f_score, _ = precision_recall_fscore_support(all_gts, all_preds, average='binary')
+        return accuracy, precision, recall, f_score
 
     def test(self):
         self.model.load_state_dict(
@@ -398,65 +453,9 @@ class Solver(object):
         print("Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f} ".format(
                 accuracy, precision,
                 recall, f_score))
- # Store metrics
-        self.accuracy_list.append(accuracy)
-        self.precision_list.append(precision)
-        self.recall_list.append(recall)
-        self.fscore_list.append(f_score)
+
 
         return accuracy, precision, recall, f_score
+        
+        
 
-    def plot_metrics(self):
-        # Plot accuracy, precision, recall, and F-score
-        epochs = range(1, len(self.accuracy_list) + 1)
-
-        plt.figure(figsize=(12, 8))
-
-        plt.subplot(2, 2, 1)
-        plt.plot(epochs, self.accuracy_list, 'b', label='Accuracy')
-        plt.title('Accuracy over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Accuracy')
-        plt.legend()
-
-        plt.subplot(2, 2, 2)
-        plt.plot(epochs, self.precision_list, 'g', label='Precision')
-        plt.title('Precision over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Precision')
-        plt.legend()
-
-        plt.subplot(2, 2, 3)
-        plt.plot(epochs, self.recall_list, 'r', label='Recall')
-        plt.title('Recall over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Recall')
-        plt.legend()
-
-        plt.subplot(2, 2, 4)
-        plt.plot(epochs, self.fscore_list, 'm', label='F-Score')
-        plt.title('F-Score over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('F-Score')
-        plt.legend()
-
-        plt.tight_layout()
-        plt.show()
-
-"""
-    def evaluate_metrics(self):
-        # Evaluate the model on validation data
-        self.model.eval()
-        all_preds = []
-        all_gts = []
-        for input_data, labels in self.vali_loader:
-            input = input_data.float().to(self.device)
-            output, _, _, _ = self.model(input)
-            preds = (output > 0.5).cpu().numpy()  # Assuming binary classification (adjust threshold as needed)
-            all_preds.extend(preds)
-            all_gts.extend(labels.numpy())
-
-        accuracy = accuracy_score(all_gts, all_preds)
-        precision, recall, f_score, _ = precision_recall_fscore_support(all_gts, all_preds, average='binary')
-        return accuracy, precision, recall, f_score
-"""
