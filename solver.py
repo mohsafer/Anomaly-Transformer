@@ -412,6 +412,7 @@ class Solver(object):
         ###############################################################################
         ###############################################################################\\
 
+
     #def add_accuracy(self, accuracy):
         self.accuracy_list.append(accuracy)
         self.precision_list.append(precision)
