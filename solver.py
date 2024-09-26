@@ -207,6 +207,9 @@ class Solver(object):
             # Compute metrics on validation set
             #accuracy, precision, recall, f_score = self.evaluate_metrics()
 
+            accuracy = accuracy_score(gt, pred)
+            precision, recall, f_score, _ = precision_recall_fscore_support(gt, pred, average='binary')
+
             # Store metrics
             self.accuracy_list.append(accuracy)
             self.precision_list.append(precision)
@@ -272,8 +275,7 @@ class Solver(object):
         plt.show()
 
 
-        accuracy = accuracy_score(gt, pred)
-        precision, recall, f_score, _ = precision_recall_fscore_support(gt, pred, average='binary')
+
         
         return accuracy, precision, recall, f_score
 
