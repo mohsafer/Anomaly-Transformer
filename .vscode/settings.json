@@ -2,8 +2,8 @@
     "json.schemas": [
 
     ]
-"editor.rulers": [
-        {"column": 80, "color": "#ff99003b"}
+   , "editor.rulers": [
+        {"column": 80, "color": "#ff9900"}
  
     ]
 }
