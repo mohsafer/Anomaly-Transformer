@@ -3,7 +3,7 @@
 
     ]
    , "editor.rulers": [
-        {"column": 80, "color": "#ff880085"}
+        {"column": 80, "color": "#00eeff85"}
  
     ]
 }
