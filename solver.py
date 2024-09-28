@@ -459,7 +459,7 @@ class Solver(object):
         plt.legend()
 
         plt.tight_layout()
-        #plt.show()
+        plt.show()
         plt.savefig('fscore_plot.png')
 
         return accuracy, precision, recall, f_score 
