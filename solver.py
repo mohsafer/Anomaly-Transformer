@@ -418,7 +418,7 @@ class Solver(object):
         self.accuracy_list.append(accuracy)
         self.precision_list.append(precision)
         self.recall_list.append(recall)
-        self.self.fscore_list.append(f_score)
+        self.fscore_list.append(f_score)
 
         #self.plot_metrics()
 
