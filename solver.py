@@ -423,7 +423,7 @@ class Solver(object):
 
     def plot_metrics(self):
         # Plot accuracy, precision, recall, and F-score
-     
+        print("====================== PLOTTING  PHASE ======================")
         epochs = range(1, len(self.accuracy_list) + 1)
        
 
