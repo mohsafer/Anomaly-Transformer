@@ -68,14 +68,14 @@ class Solver(object):
     DEFAULTS = {}
 
     def __init__(self, config):
-        """
-#######################################ADD
+        
+#######################################FOR PLOTTING
         self.accuracy_list = []
         self.precision_list = []
         self.recall_list = []
         self.fscore_list = []
 #######################################ADD
-        """
+        
 
         self.__dict__.update(Solver.DEFAULTS, **config)
 
@@ -147,7 +147,7 @@ class Solver(object):
         early_stopping = EarlyStopping(patience=3, verbose=True, dataset_name=self.dataset)
         train_steps = len(self.train_loader)
 
-        for epoch in range(self.num_epochs):
+        for epoch in range(self.num_epochs):   #|||||||||||||||||||||||main EPOCH loop
             iter_count = 0
             loss1_list = []
 
@@ -204,7 +204,13 @@ class Solver(object):
 
             # Validation step
             vali_loss1, vali_loss2 = self.vali(self.test_loader)
- 
+            
+            accuracy, precision, recall, f_score = self.test()
+            self.accuracy_list.append(accuracy)
+            self.precision_list.append(precision)
+            self.recall_list.append(recall)
+            self.fscore_list.append(f_score)
+
             """
             #accuracy = accuracy_score(gt, pred)
             #precision, recall, f_score, _ = precision_recall_fscore_support(gt, pred, average='binary')
@@ -221,7 +227,7 @@ class Solver(object):
             print(f"  Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F-score: {f_score:.4f}")
             """
 
-        #   print(
+         #   print(
          #       "Epoch: {0}, Steps: {1} | Train Loss: {2:.7f} Vali Loss: {3:.7f} ".format(
               #      epoch + 1, train_steps, train_loss, vali_loss1))
 
@@ -232,15 +238,10 @@ class Solver(object):
                 break
             adjust_learning_rate(self.optimizer, epoch + 1, self.lr)
 
-
+        self.plot_metrics()   #||||||||||||||||||| Call Plotting
 
     def test(self):
         
-        self.accuracy_list = []
-        self.precision_list = []
-        self.recall_list = []
-        self.fscore_list = []
-
         self.model.load_state_dict(
             torch.load(
                 os.path.join(str(self.model_save_path), str(self.dataset) + '_checkpoint.pth')))
@@ -407,27 +408,24 @@ class Solver(object):
                 accuracy, precision,
                 recall, f_score))
 
-        ###############################################################################\\
-        ###############################################################################\\
-        ##############################PLOTTING ##########################################
-        ###############################################################################
-        ###############################################################################\\
+        return accuracy, precision, recall, f_score
 
-
-
+        """
         self.accuracy_list.append(accuracy)
         self.precision_list.append(precision)
         self.recall_list.append(recall)
         self.fscore_list.append(f_score)
+
         print("|||||||||||||||||||||||||||| ACCURACY LIST ||||||||||||||||||||||||")
         print("Accuracy List:", self.accuracy_list)
-        #self.plot_metrics()
+       
+        """
 
-        # def plot_metrics(self):
+    def plot_metrics(self):
         # Plot accuracy, precision, recall, and F-score
      
         epochs = range(1, len(self.accuracy_list) + 1)
-       # epochs =  range(self.num_epochs)
+       
 
         plt.figure(figsize=(12, 8))
 
@@ -463,7 +461,7 @@ class Solver(object):
         plt.show()
         plt.savefig('fscore_plot.png')
 
-        return accuracy, precision, recall, f_score 
+         
 
         
         
