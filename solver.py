@@ -419,7 +419,8 @@ class Solver(object):
         self.precision_list.append(precision)
         self.recall_list.append(recall)
         self.fscore_list.append(f_score)
-
+        print("|||||||||||||||||||||||||||| ACCURACY LIST ||||||||||||||||||||||||")
+        print("Accuracy List:", self.accuracy_list)
         #self.plot_metrics()
 
         # def plot_metrics(self):
