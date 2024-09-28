@@ -21,7 +21,7 @@ def main(config):
         solver.train()
     elif config.mode == 'test':
         solver.test()
-        solver.plot_metrics()
+       # solver.plot_metrics()
     return solver
 
 

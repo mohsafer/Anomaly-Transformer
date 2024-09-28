@@ -392,7 +392,8 @@ class Solver(object):
                 anomaly_state = False
             if anomaly_state:
                 pred[i] = 1
-
+        
+        
         pred = np.array(pred)
         gt = np.array(gt)
         print("pred: ", pred.shape)
@@ -413,24 +414,19 @@ class Solver(object):
         ###############################################################################\\
 
 
-    #def add_accuracy(self, accuracy):
+
         self.accuracy_list.append(accuracy)
         self.precision_list.append(precision)
         self.recall_list.append(recall)
         self.self.fscore_list.append(f_score)
 
-        self.plot_metrics()
+        #self.plot_metrics()
 
-        return accuracy, precision, recall, f_score
-
-        # Plot the metrics
-
-        
-    def plot_metrics(self):
+        # def plot_metrics(self):
         # Plot accuracy, precision, recall, and F-score
-        #range(self.num_epochs):
-       # epochs = range(1, len(self.accuracy_list) + 1)
-        epochs =  range(self.num_epochs)
+     
+        epochs = range(1, len(self.accuracy_list) + 1)
+       # epochs =  range(self.num_epochs)
 
         plt.figure(figsize=(12, 8))
 
@@ -463,9 +459,10 @@ class Solver(object):
         plt.legend()
 
         plt.tight_layout()
-        plt.show()
+        #plt.show()
+        plt.savefig('fscore_plot.png')
 
-
+        return accuracy, precision, recall, f_score 
 
         
         
