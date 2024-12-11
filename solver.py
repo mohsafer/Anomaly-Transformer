@@ -191,11 +191,14 @@ class Solver(object):
                 loss1.backward(retain_graph=True)
                 loss2.backward()
                 self.optimizer.step()
+                writer.add_scalar('training loss', rec_loss.item() , epoch * len(self.train_loader) + i)
+                print('epoch {}, loss_perior {}, loss_series {}'.format(epoch * len(self.train_loader) + i, prior_loss.item(), series_loss.item()))
+
 
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
             train_loss = np.average(loss1_list)
             ####################################################################################################################TENSOR
-            writer.add_scalar('training loss', rec_loss.item() , epoch * len(self.train_loader) + i)
+            
             vali_loss1, vali_loss2 = self.vali(self.test_loader)
 
             print(
@@ -207,6 +210,7 @@ class Solver(object):
                 break
             adjust_learning_rate(self.optimizer, epoch + 1, self.lr)
         writer.close()
+
     def test(self):
         self.model.load_state_dict(
             torch.load(
