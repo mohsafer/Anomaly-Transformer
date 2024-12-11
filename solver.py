@@ -195,7 +195,7 @@ class Solver(object):
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
             train_loss = np.average(loss1_list)
             ####################################################################################################################TENSOR
-            writer.add_scalar('training loss', train_loss.item() , epoch * len(self.train_loader) + i)
+            writer.add_scalar('training loss', rec_loss.item() , epoch * len(self.train_loader) + i)
             vali_loss1, vali_loss2 = self.vali(self.test_loader)
 
             print(
