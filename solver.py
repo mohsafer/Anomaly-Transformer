@@ -1,4 +1,5 @@
 import torch
+from torch.utils.tensorboard import SummaryWriter
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
@@ -8,6 +9,7 @@ from utils.utils import *
 from model.AnomalyTransformer import AnomalyTransformer
 from data_factory.data_loader import get_loader_segment
 
+writer = SummaryWriter()
 
 def my_kl_loss(p, q):
     res = p * (torch.log(p + 0.0001) - torch.log(q + 0.0001))
@@ -192,7 +194,8 @@ class Solver(object):
 
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
             train_loss = np.average(loss1_list)
-
+            ####################################################################################################################TENSOR
+            writer.add_scalar('training loss', train_loss.item() , epoch * len(self.train_loader) + i)
             vali_loss1, vali_loss2 = self.vali(self.test_loader)
 
             print(
@@ -203,7 +206,7 @@ class Solver(object):
                 print("Early stopping")
                 break
             adjust_learning_rate(self.optimizer, epoch + 1, self.lr)
-
+        writer.close()
     def test(self):
         self.model.load_state_dict(
             torch.load(
