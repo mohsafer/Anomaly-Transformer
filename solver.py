@@ -7,9 +7,7 @@ import time
 from utils.utils import *
 from model.AnomalyTransformer import AnomalyTransformer
 from data_factory.data_loader import get_loader_segment
-import matplotlib.pyplot as plt
-from sklearn.metrics import precision_recall_fscore_support
-from sklearn.metrics import accuracy_score
+
 
 def my_kl_loss(p, q):
     res = p * (torch.log(p + 0.0001) - torch.log(q + 0.0001))
@@ -68,14 +66,6 @@ class Solver(object):
     DEFAULTS = {}
 
     def __init__(self, config):
-        
-#######################################FOR PLOTTING
-        self.accuracy_list = []
-        self.precision_list = []
-        self.recall_list = []
-        self.fscore_list = []
-#######################################ADD
-        
 
         self.__dict__.update(Solver.DEFAULTS, **config)
 
@@ -105,6 +95,7 @@ class Solver(object):
 
     def vali(self, vali_loader):
         self.model.eval()
+
         loss_1 = []
         loss_2 = []
         for i, (input_data, _) in enumerate(vali_loader):
@@ -147,7 +138,7 @@ class Solver(object):
         early_stopping = EarlyStopping(patience=3, verbose=True, dataset_name=self.dataset)
         train_steps = len(self.train_loader)
 
-        for epoch in range(self.num_epochs):   #|||||||||||||||||||||||main EPOCH loop
+        for epoch in range(self.num_epochs):
             iter_count = 0
             loss1_list = []
 
@@ -202,46 +193,18 @@ class Solver(object):
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
             train_loss = np.average(loss1_list)
 
-            # Validation step
             vali_loss1, vali_loss2 = self.vali(self.test_loader)
-            
-            accuracy, precision, recall, f_score = self.test()
-            self.accuracy_list.append(accuracy)
-            self.precision_list.append(precision)
-            self.recall_list.append(recall)
-            self.fscore_list.append(f_score)
 
-            """
-            #accuracy = accuracy_score(gt, pred)
-            #precision, recall, f_score, _ = precision_recall_fscore_support(gt, pred, average='binary')
-
-            # Store metrics
-            self.accuracy_list.append(accuracy)
-            self.precision_list.append(precision)
-            self.recall_list.append(recall)
-            self.fscore_list.append(f_score)
-
-            print(f"Epoch {epoch + 1}:")
-            print(f"  Train Loss: {train_loss:.7f}")
-            print(f"  Validation Loss: {vali_loss1:.7f}")
-            print(f"  Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F-score: {f_score:.4f}")
-            """
-
-         #   print(
-         #       "Epoch: {0}, Steps: {1} | Train Loss: {2:.7f} Vali Loss: {3:.7f} ".format(
-              #      epoch + 1, train_steps, train_loss, vali_loss1))
-
-
+            print(
+                "Epoch: {0}, Steps: {1} | Train Loss: {2:.7f} Vali Loss: {3:.7f} ".format(
+                    epoch + 1, train_steps, train_loss, vali_loss1))
             early_stopping(vali_loss1, vali_loss2, self.model, path)
             if early_stopping.early_stop:
                 print("Early stopping")
                 break
             adjust_learning_rate(self.optimizer, epoch + 1, self.lr)
 
-        self.plot_metrics()   #||||||||||||||||||| Call Plotting
-
     def test(self):
-        
         self.model.load_state_dict(
             torch.load(
                 os.path.join(str(self.model_save_path), str(self.dataset) + '_checkpoint.pth')))
@@ -372,7 +335,7 @@ class Solver(object):
         print("pred:   ", pred.shape)
         print("gt:     ", gt.shape)
 
-        
+        # detection adjustment: please see this issue for more information https://github.com/thuml/Anomaly-Transformer/issues/14
         anomaly_state = False
         for i in range(len(gt)):
             if gt[i] == 1 and pred[i] == 1 and not anomaly_state:
@@ -393,76 +356,20 @@ class Solver(object):
                 anomaly_state = False
             if anomaly_state:
                 pred[i] = 1
-        
-        
+
         pred = np.array(pred)
         gt = np.array(gt)
         print("pred: ", pred.shape)
         print("gt:   ", gt.shape)
 
-
+        from sklearn.metrics import precision_recall_fscore_support
+        from sklearn.metrics import accuracy_score
         accuracy = accuracy_score(gt, pred)
         precision, recall, f_score, support = precision_recall_fscore_support(gt, pred,
                                                                               average='binary')
-        print("Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f} ".format(
+        print(
+            "Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f} ".format(
                 accuracy, precision,
                 recall, f_score))
 
         return accuracy, precision, recall, f_score
-
-        """
-        self.accuracy_list.append(accuracy)
-        self.precision_list.append(precision)
-        self.recall_list.append(recall)
-        self.fscore_list.append(f_score)
-
-        print("|||||||||||||||||||||||||||| ACCURACY LIST ||||||||||||||||||||||||")
-        print("Accuracy List:", self.accuracy_list)
-       
-        """
-
-    def plot_metrics(self):
-        # Plot accuracy, precision, recall, and F-score
-        print("====================== PLOTTING  PHASE ======================")
-        epochs = range(1, len(self.accuracy_list) + 1)
-       
-
-        plt.figure(figsize=(12, 8))
-
-        plt.subplot(2, 2, 1)
-        plt.plot(epochs, self.accuracy_list, 'b', label='Accuracy')
-        plt.title('Accuracy over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Accuracy')
-        plt.legend()
-
-        plt.subplot(2, 2, 2)
-        plt.plot(epochs, self.precision_list, 'g', label='Precision')
-        plt.title('Precision over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Precision')
-        plt.legend()
-
-        plt.subplot(2, 2, 3)
-        plt.plot(epochs, self.recall_list, 'r', label='Recall')
-        plt.title('Recall over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('Recall')
-        plt.legend()
-
-        plt.subplot(2, 2, 4)
-        plt.plot(epochs, self.fscore_list, 'm', label='F-Score')
-        plt.title('F-Score over Epochs')
-        plt.xlabel('Epochs')
-        plt.ylabel('F-Score')
-        plt.legend()
-
-        plt.tight_layout()
-        plt.show()
-        plt.savefig('fscore_plot.png')
-
-         
-
-        
-        
-
