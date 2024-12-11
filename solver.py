@@ -192,7 +192,7 @@ class Solver(object):
                 loss2.backward()
                 self.optimizer.step()
                 writer.add_scalar('training loss', rec_loss.item() , epoch * len(self.train_loader) + i)
-                print('epoch {}, loss_perior {}, loss_series {}'.format(epoch  + i, prior_loss.item(), series_loss.item()))
+                print('epoch {}, loss_1 {}, loss_series {}'.format(epoch * len(self.train_loader) + i  , loss1.item(), loss2.item()))
 
 
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
