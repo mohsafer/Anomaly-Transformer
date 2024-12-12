@@ -193,20 +193,13 @@ class Solver(object):
                 loss2.backward()
                 self.optimizer.step()
                 preds = output.argmax(dim=1)  # Assuming output is logits
-                
-                #new
-                epoch_correct += (preds == labels).sum().item()  # Count correct predictions
-                epoch_total += labels.size(0)  # Count total samples
-
-
+ 
                 # from sklearn.metrics import accuracy_score
                 # acc = accuracy_score(labels.cpu().numpy(), preds.cpu().numpy())
                 writer.add_scalar('training loss', rec_loss.item() , epoch * len(self.train_loader) + i)
                 
                 print('epoch {}, loss_1 {}, loss_2 {},  rec_loss_ {}'.format(epoch * len(self.train_loader) + i  , loss1.item(), loss2.item(), rec_loss.item()))
-            #new
-                epoch_accuracy = epoch_correct / epoch_total
-                writer.add_scalar('Train Accuracy', epoch_accuracy.item(), epoch * len(self.train_loader) + i)
+        
            
            
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
