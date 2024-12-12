@@ -192,6 +192,7 @@ class Solver(object):
                 loss2.backward()
                 self.optimizer.step()
                 preds = output.argmax(dim=1)  # Assuming output is logits
+                from sklearn.metrics import accuracy_score
                 acc = accuracy_score(labels.cpu().numpy(), preds.cpu().numpy())
                 writer.add_scalar('training loss', rec_loss.item() , epoch * len(self.train_loader) + i)
                 writer.add_scalar('train accuracy', acc, epoch * len(self.train_loader) + i)
