@@ -143,8 +143,7 @@ class Solver(object):
         for epoch in range(self.num_epochs):
             iter_count = 0
             loss1_list = []
-            epoch_correct = 0  # Correct predictions across the epoch
-            epoch_total = 0    # Total samples across the epoch
+
             epoch_time = time.time()
             self.model.train()
             for i, (input_data, labels) in enumerate(self.train_loader):
@@ -193,16 +192,13 @@ class Solver(object):
                 loss2.backward()
                 self.optimizer.step()
                 preds = output.argmax(dim=1)  # Assuming output is logits
-                if preds.shape != labels.shape:
-                    print(f"Shape mismatch: preds={preds.shape}, labels={labels.shape}")
-                labels = labels.view_as(preds)  # Reshape labels to match preds
 
 # Update correct and total counts
                 epoch_correct += (preds == labels).sum().item()
                 epoch_total += labels.size(0)
 
-                epoch_accuracy = epoch_correct / epoch_total
-                writer.add_scalar('Train Accuracy', epoch_accuracy.item(), epoch * len(self.train_loader) + i)
+ 
+                #writer.add_scalar('Train Accuracy', epoch_accuracy.item(), epoch * len(self.train_loader) + i)
                 # from sklearn.metrics import accuracy_score
                 # acc = accuracy_score(labels.cpu().numpy(), preds.cpu().numpy())
                 writer.add_scalar('training loss', rec_loss.item() , epoch * len(self.train_loader) + i)
