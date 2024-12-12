@@ -194,8 +194,7 @@ class Solver(object):
                 preds = output.argmax(dim=1)  # Assuming output is logits
 
 # Update correct and total counts
-                epoch_correct += (preds == labels).sum().item()
-                epoch_total += labels.size(0)
+ 
 
  
                 #writer.add_scalar('Train Accuracy', epoch_accuracy.item(), epoch * len(self.train_loader) + i)
