@@ -377,7 +377,7 @@ class Solver(object):
         from sklearn.metrics import precision_recall_fscore_support
         from sklearn.metrics import accuracy_score
         accuracy = accuracy_score(gt, pred)
-        writer.add_scalar('train accuracy', accuracy.item(), epoch * len(self.train_loader) + i)
+        writer.add_scalar('train accuracy', accuracy.item(), self.num_epochs * len(self.train_loader) + i)
         precision, recall, f_score, support = precision_recall_fscore_support(gt, pred,
                                                                               average='binary')
         print(
