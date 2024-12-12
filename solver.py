@@ -206,7 +206,7 @@ class Solver(object):
                 print('epoch {}, loss_1 {}, loss_2 {},  rec_loss_ {}'.format(epoch * len(self.train_loader) + i  , loss1.item(), loss2.item(), rec_loss.item()))
             #new
                 epoch_accuracy = epoch_correct / epoch_total
-                writer.add_scalar('Train Accuracy', epoch_accuracy, epoch * len(self.train_loader) + i)
+                writer.add_scalar('Train Accuracy', epoch_accuracy.item(), epoch * len(self.train_loader) + i)
            
            
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
