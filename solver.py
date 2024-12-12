@@ -192,10 +192,11 @@ class Solver(object):
                 loss2.backward()
                 self.optimizer.step()
                 preds = output.argmax(dim=1)  # Assuming output is logits
-                from sklearn.metrics import accuracy_score
-                acc = accuracy_score(labels.cpu().numpy(), preds.cpu().numpy())
+                
+                # from sklearn.metrics import accuracy_score
+                # acc = accuracy_score(labels.cpu().numpy(), preds.cpu().numpy())
                 writer.add_scalar('training loss', rec_loss.item() , epoch * len(self.train_loader) + i)
-                writer.add_scalar('train accuracy', acc, epoch * len(self.train_loader) + i)
+                
                 print('epoch {}, loss_1 {}, loss_2 {},  rec_loss_ {}'.format(epoch * len(self.train_loader) + i  , loss1.item(), loss2.item(), rec_loss.item()))
 
 
@@ -213,7 +214,7 @@ class Solver(object):
                 print("Early stopping")
                 break
             adjust_learning_rate(self.optimizer, epoch + 1, self.lr)
-        writer.close()
+        #writer.close()
 
     def test(self):
         self.model.load_state_dict(
@@ -376,11 +377,14 @@ class Solver(object):
         from sklearn.metrics import precision_recall_fscore_support
         from sklearn.metrics import accuracy_score
         accuracy = accuracy_score(gt, pred)
+        writer.add_scalar('train accuracy', accuracy.item(), epoch * len(self.train_loader) + i)
         precision, recall, f_score, support = precision_recall_fscore_support(gt, pred,
                                                                               average='binary')
         print(
             "Accuracy : {:0.4f}, Precision : {:0.4f}, Recall : {:0.4f}, F-score : {:0.4f} ".format(
                 accuracy, precision,
                 recall, f_score))
-
+        
         return accuracy, precision, recall, f_score
+
+writer.close()
