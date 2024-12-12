@@ -143,7 +143,8 @@ class Solver(object):
         for epoch in range(self.num_epochs):
             iter_count = 0
             loss1_list = []
-
+            epoch_correct = 0  # Correct predictions across the epoch
+            epoch_total = 0    # Total samples across the epoch
             epoch_time = time.time()
             self.model.train()
             for i, (input_data, labels) in enumerate(self.train_loader):
@@ -193,14 +194,23 @@ class Solver(object):
                 self.optimizer.step()
                 preds = output.argmax(dim=1)  # Assuming output is logits
                 
+                #new
+                epoch_correct += (preds == labels).sum().item()  # Count correct predictions
+                epoch_total += labels.size(0)  # Count total samples
+
+
                 # from sklearn.metrics import accuracy_score
                 # acc = accuracy_score(labels.cpu().numpy(), preds.cpu().numpy())
                 writer.add_scalar('training loss', rec_loss.item() , epoch * len(self.train_loader) + i)
                 
                 print('epoch {}, loss_1 {}, loss_2 {},  rec_loss_ {}'.format(epoch * len(self.train_loader) + i  , loss1.item(), loss2.item(), rec_loss.item()))
-
-
+            #new
+            epoch_accuracy = epoch_correct / epoch_total
+            writer.add_scalar('Train Accuracy', epoch_accuracy, epoch * len(self.train_loader) + i)
+           
+           
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
+            print(f"Epoch {epoch + 1}: Train Accuracy={epoch_accuracy:.4f}")
             train_loss = np.average(loss1_list)
             ####################################################################################################################TENSOR
             
@@ -214,7 +224,7 @@ class Solver(object):
                 print("Early stopping")
                 break
             adjust_learning_rate(self.optimizer, epoch + 1, self.lr)
-        #writer.close()
+        writer.close()
 
     def test(self):
         self.model.load_state_dict(
@@ -257,7 +267,7 @@ class Solver(object):
             cri = metric * loss
             cri = cri.detach().cpu().numpy()
             attens_energy.append(cri)
-            writer.add_scalar('train accuracy', accuracy.item(), self.num_epochs * len(self.train_loader) + i)
+            
         attens_energy = np.concatenate(attens_energy, axis=0).reshape(-1)
         train_energy = np.array(attens_energy)
 
@@ -387,4 +397,4 @@ class Solver(object):
         
         return accuracy, precision, recall, f_score
 
-writer.close()
+#writer.close()
