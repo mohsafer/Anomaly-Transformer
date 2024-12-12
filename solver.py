@@ -257,7 +257,7 @@ class Solver(object):
             cri = metric * loss
             cri = cri.detach().cpu().numpy()
             attens_energy.append(cri)
-
+            writer.add_scalar('train accuracy', accuracy.item(), self.num_epochs * len(self.train_loader) + i)
         attens_energy = np.concatenate(attens_energy, axis=0).reshape(-1)
         train_energy = np.array(attens_energy)
 
@@ -377,7 +377,7 @@ class Solver(object):
         from sklearn.metrics import precision_recall_fscore_support
         from sklearn.metrics import accuracy_score
         accuracy = accuracy_score(gt, pred)
-        writer.add_scalar('train accuracy', accuracy.item(), self.num_epochs * len(self.train_loader) + i)
+        
         precision, recall, f_score, support = precision_recall_fscore_support(gt, pred,
                                                                               average='binary')
         print(
