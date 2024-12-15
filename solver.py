@@ -191,7 +191,7 @@ class Solver(object):
                 loss1.backward(retain_graph=True)
                 loss2.backward()
                 self.optimizer.step()
-                preds = output.argmax(dim=1)  # Assuming output is logits
+                #preds = output.argmax(dim=1)  # Assuming output is logits
 
 # Update correct and total counts
  
