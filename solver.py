@@ -207,7 +207,7 @@ class Solver(object):
            
            
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
-            print(f"Epoch {epoch + 1}: Train Accuracy={epoch_accuracy:.4f}")
+            #print(f"Epoch {epoch + 1}: Train Accuracy={epoch_accuracy:.4f}")
             train_loss = np.average(loss1_list)
             ####################################################################################################################TENSOR
             
