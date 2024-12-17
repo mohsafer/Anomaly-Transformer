@@ -192,19 +192,19 @@ class Solver(object):
                 loss1.backward(retain_graph=True)
                 loss2.backward()
                 self.optimizer.step()
-                labels = labels.to(self.device)
+                #labels = labels.to(self.device)
 
-                # Convert model output to predicted classes:
-                _, predictions = torch.max(output, dim=1)
+                # # Convert model output to predicted classes:
+                # _, predictions = torch.max(output, dim=1)
 
-                # Move predictions and labels to CPU and convert to numpy if using sklearn:
-                y_true = labels.cpu().numpy()
-                y_pred = predictions.cpu().numpy()
+                # # Move predictions and labels to CPU and convert to numpy if using sklearn:
+                # y_true = labels.cpu().numpy()
+                # y_pred = predictions.cpu().numpy()
 
-                # Now you can compute accuracy:
-                accuracy = accuracy_score(y_true, y_pred)
-                print("Accuracy:", accuracy)
-                #preds = output.argmax(dim=1)  # Assuming output is logits
+                # # Now you can compute accuracy:
+                # accuracy = accuracy_score(y_true, y_pred)
+                # print("Accuracy:", accuracy)
+                # #preds = output.argmax(dim=1)  # Assuming output is logits
 
 # Update correct and total counts
  
