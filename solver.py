@@ -175,7 +175,7 @@ class Solver(object):
                 prior_loss = prior_loss / len(prior)
 
                 rec_loss = self.criterion(output, input)
-
+                accuracy = accuracy_score(y_true, y_pred)
                 loss1_list.append((rec_loss - self.k * series_loss).item())
                 loss1 = rec_loss - self.k * series_loss
                 loss2 = rec_loss + self.k * prior_loss
