@@ -8,6 +8,7 @@ import time
 from utils.utils import *
 from model.AnomalyTransformer import AnomalyTransformer
 from data_factory.data_loader import get_loader_segment
+from sklearn.metrics import accuracy_score
 
 writer = SummaryWriter()
 
