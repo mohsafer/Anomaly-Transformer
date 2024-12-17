@@ -176,7 +176,7 @@ class Solver(object):
                 prior_loss = prior_loss / len(prior)
 
                 rec_loss = self.criterion(output, input)
-                accuracy = accuracy_score(y_true, y_pred)
+                #accuracy = accuracy_score(y_true, y_pred)
                 loss1_list.append((rec_loss - self.k * series_loss).item())
                 loss1 = rec_loss - self.k * series_loss
                 loss2 = rec_loss + self.k * prior_loss
@@ -192,6 +192,18 @@ class Solver(object):
                 loss1.backward(retain_graph=True)
                 loss2.backward()
                 self.optimizer.step()
+                labels = labels.to(self.device)
+
+                # Convert model output to predicted classes:
+                _, predictions = torch.max(output, dim=1)
+
+                # Move predictions and labels to CPU and convert to numpy if using sklearn:
+                y_true = labels.cpu().numpy()
+                y_pred = predictions.cpu().numpy()
+
+                # Now you can compute accuracy:
+                accuracy = accuracy_score(y_true, y_pred)
+                print("Accuracy:", accuracy)
                 #preds = output.argmax(dim=1)  # Assuming output is logits
 
 # Update correct and total counts
