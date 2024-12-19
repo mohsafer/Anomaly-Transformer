@@ -144,7 +144,7 @@ class Solver(object):
         for epoch in range(self.num_epochs):
             iter_count = 0
             loss1_list = []
-
+            accuracy_list = []
             epoch_time = time.time()
             self.model.train()
             for i, (input_data, labels) in enumerate(self.train_loader):
@@ -154,7 +154,9 @@ class Solver(object):
                 input = input_data.float().to(self.device)
 
                 output, series, prior, _ = self.model(input)
-
+                preds = torch.argmax(output, dim=1) # for classification tasks you need to adapt this
+                acc = accuracy_score(labels.cpu().numpy(), preds.cpu().numpy())
+                accuracy_list.append(acc)
                 # calculate Association discrepancy
                 series_loss = 0.0
                 prior_loss = 0.0
@@ -214,7 +216,7 @@ class Solver(object):
                 # from sklearn.metrics import accuracy_score
                 # acc = accuracy_score(labels.cpu().numpy(), preds.cpu().numpy())
                 writer.add_scalar('training loss', rec_loss.item() , epoch * len(self.train_loader) + i)
-                
+                writer.add_scalar('Train Accuracy', acc, epoch * len(self.data_loader) + i)  
                 print('epoch {}, loss_1 {}, loss_2 {},  rec_loss_ {}'.format(epoch * len(self.train_loader) + i  , loss1.item(), loss2.item(), rec_loss.item()))
         
            
@@ -222,13 +224,14 @@ class Solver(object):
             print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
             #print(f"Epoch {epoch + 1}: Train Accuracy={epoch_accuracy:.4f}")
             train_loss = np.average(loss1_list)
+            train_accuracy = np.average(accuracy_list)
             ####################################################################################################################TENSOR
             
             vali_loss1, vali_loss2 = self.vali(self.test_loader)
 
             print(
                 "Epoch: {0}, Steps: {1} | Train Loss: {2:.7f} Vali Loss: {3:.7f} ".format(
-                    epoch + 1, train_steps, train_loss, vali_loss1))
+                    epoch + 1, train_steps, train_loss, vali_loss1و train_accuracy))
             early_stopping(vali_loss1, vali_loss2, self.model, path)
             if early_stopping.early_stop:
                 print("Early stopping")
@@ -254,7 +257,8 @@ class Solver(object):
             output, series, prior, _ = self.model(input)
             loss = torch.mean(criterion(input, output), dim=-1)
             series_loss = 0.0
-            prior_loss = 0.0
+            
+
             for u in range(len(prior)):
                 if u == 0:
                     series_loss = my_kl_loss(series[u], (
