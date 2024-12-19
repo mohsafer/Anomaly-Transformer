@@ -231,7 +231,7 @@ class Solver(object):
 
             print(
                 "Epoch: {0}, Steps: {1} | Train Loss: {2:.7f} Vali Loss: {3:.7f} ".format(
-                    epoch + 1, train_steps, train_loss, vali_loss1و train_accuracy))
+                    epoch + 1, train_steps, train_loss, vali_loss1, train_accuracy))
             early_stopping(vali_loss1, vali_loss2, self.model, path)
             if early_stopping.early_stop:
                 print("Early stopping")
